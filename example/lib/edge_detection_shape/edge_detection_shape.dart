@@ -10,9 +10,9 @@ import 'touch_bubble.dart';
 
 class EdgeDetectionShape extends StatefulWidget {
   EdgeDetectionShape({
-    @required this.renderedImageSize,
-    @required this.originalImageSize,
-    @required this.edgeDetectionResult
+    required this.renderedImageSize,
+    required this.originalImageSize,
+    required this.edgeDetectionResult
   });
 
   final Size renderedImageSize;
@@ -24,17 +24,17 @@ class EdgeDetectionShape extends StatefulWidget {
 }
 
 class _EdgeDetectionShapeState extends State<EdgeDetectionShape> {
-  double edgeDraggerSize;
+  late double edgeDraggerSize;
 
-  EdgeDetectionResult edgeDetectionResult;
-  List<Offset> points;
+  late EdgeDetectionResult edgeDetectionResult;
+  late List<Offset> points;
 
-  double renderedImageWidth;
-  double renderedImageHeight;
-  double top;
-  double left;
+  late double renderedImageWidth;
+  late double renderedImageHeight;
+  late double top;
+  late double left;
 
-  Offset currentDragPosition;
+  late Offset ? currentDragPosition;
 
   @override
   void didChangeDependencies() {
@@ -47,7 +47,6 @@ class _EdgeDetectionShapeState extends State<EdgeDetectionShape> {
   void initState() {
     edgeDetectionResult = widget.edgeDetectionResult;
     _calculateDimensionValues();
-
     super.initState();
   }
 
@@ -62,7 +61,7 @@ class _EdgeDetectionShapeState extends State<EdgeDetectionShape> {
           CustomPaint(
             painter: EdgePainter(
               points: points,
-              color: Theme.of(context).accentColor.withOpacity(0.5)
+              color: Colors.red.withOpacity(0.5)
             )
           )
         ],

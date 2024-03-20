@@ -45,7 +45,7 @@ class EdgeDetector {
     return await _subscribeToPort<bool>(port);
   }
 
-  void _spawnIsolate<T>(Function function, dynamic input, ReceivePort port) {
+  void _spawnIsolate<T>(final function, dynamic input, ReceivePort port) {
     Isolate.spawn<T>(
       function,
       input,
@@ -60,18 +60,18 @@ class EdgeDetector {
     var completer = new Completer<T>();
     
     sub = port.listen((result) async {
-      await sub?.cancel();
       completer.complete(await result);
     });
-    
+
+    sub.cancel();
     return completer.future;
   }
 }
 
 class EdgeDetectionInput {
   EdgeDetectionInput({
-    this.inputPath,
-    this.sendPort
+    required this.inputPath,
+    required this.sendPort
   });
 
   String inputPath;
@@ -80,9 +80,9 @@ class EdgeDetectionInput {
 
 class ProcessImageInput {
   ProcessImageInput({
-    this.inputPath,
-    this.edgeDetectionResult,
-    this.sendPort
+    required this.inputPath,
+    required this.edgeDetectionResult,
+    required this.sendPort
   });
 
   String inputPath;

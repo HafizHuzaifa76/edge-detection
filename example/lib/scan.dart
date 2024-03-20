@@ -19,11 +19,11 @@ class Scan extends StatefulWidget {
 }
 
 class _ScanState extends State<Scan> {
-  CameraController controller;
-  List<CameraDescription> cameras;
-  String imagePath;
-  String croppedImagePath;
-  EdgeDetectionResult edgeDetectionResult;
+  late CameraController controller;
+  late List<CameraDescription> cameras;
+  late String? imagePath;
+  late String? croppedImagePath;
+  late EdgeDetectionResult? edgeDetectionResult;
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _ScanState extends State<Scan> {
 
   Widget _getMainWidget() {
     if (croppedImagePath != null) {
-      return ImageView(imagePath: croppedImagePath);
+      return ImageView(imagePath: croppedImagePath!);
     }
 
     if (imagePath == null && edgeDetectionResult == null) {
@@ -57,8 +57,8 @@ class _ScanState extends State<Scan> {
     }
 
     return ImagePreview(
-      imagePath: imagePath,
-      edgeDetectionResult: edgeDetectionResult,
+      imagePath: imagePath!,
+      edgeDetectionResult: edgeDetectionResult!,
     );
   }
 
@@ -100,9 +100,9 @@ class _ScanState extends State<Scan> {
           child: Icon(Icons.check),
           onPressed: () {
             if (croppedImagePath == null) {
-              return _processImage(
-                imagePath, edgeDetectionResult
-              );
+              if (imagePath != null && edgeDetectionResult != null) {
+                _processImage(imagePath!, edgeDetectionResult!);
+              }
             }
 
             setState(() {
@@ -135,7 +135,7 @@ class _ScanState extends State<Scan> {
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
-  Future<String> takePicture() async {
+  Future<String?> takePicture() async {
     if (!controller.value.isInitialized) {
       log('Error: select a camera first.');
       return null;
@@ -151,6 +151,7 @@ class _ScanState extends State<Scan> {
     }
 
     try {
+      final String filePath = '$dirPath/${timestamp()}.jpg';
       await controller.takePicture(filePath);
     } on CameraException catch (e) {
       log(e.toString());
@@ -194,21 +195,21 @@ class _ScanState extends State<Scan> {
   }
 
   void onTakePictureButtonPressed() async {
-    String filePath = await takePicture();
+    String? filePath = await takePicture();
 
     log('Picture saved to $filePath');
 
-    await _detectEdges(filePath);
+    await _detectEdges(filePath!);
   }
 
   void _onGalleryButtonPressed() async {
     ImagePicker picker = ImagePicker();
-    PickedFile pickedFile = await picker.getImage(source: ImageSource.gallery);
-    final filePath = pickedFile.path;
+    XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final filePath = pickedFile?.path;
 
     log('Picture saved to $filePath');
 
-    _detectEdges(filePath);
+    _detectEdges(filePath!);
   }
 
   Padding _getBottomBar() {
